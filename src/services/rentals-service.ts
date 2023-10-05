@@ -4,7 +4,7 @@ import { notFoundError } from "../errors/notfound-error";
 import { RentalInput } from "../protocols";
 import { movieAlreadyInRental } from "../errors/movie-inretal-error";
 import { insufficientAgeError } from "../errors/insufficientage-error";
-import usersRepository from "../repositories/users-repository";
+import * as usersRepository from "../repositories/users-repository";
 import * as rentalsRepository from "../repositories/rentals-repository";
 import moviesRepository from "../repositories/movies-repository";
 import { pendentRentalError } from "../errors/pendent-rental-error";
@@ -15,12 +15,12 @@ export const RENTAL_LIMITATIONS = {
   ADULTS_REQUIRED_AGE: 18,
   RENTAL_DAYS_LIMIT: 3
 }
-
+//ok
 export async function getRentals() {
   const rentals = await rentalsRepository.getRentals();
   return rentals;
 }
-
+//ok
 export async function getRentalById(rentalId: number) {
   const rental = await rentalsRepository.getRentalById(rentalId);
   if (!rental) throw notFoundError("Rental not found.");
@@ -41,6 +41,8 @@ export async function createRental(rentalInput: RentalInput) {
   return rental;
 }
 
+
+//ok
 export async function finishRental(rentalId: number) {
   const rental = await rentalsRepository.getRentalById(rentalId);
   if (!rental) throw notFoundError("Rental not found.");
@@ -48,6 +50,8 @@ export async function finishRental(rentalId: number) {
   await rentalsRepository.finishRental(rentalId);
 }
 
+
+//ok 
 export async function getUserForRental(userId: number) {
   const user = await usersRepository.getById(userId);
   if (!user) throw notFoundError("User not found.");

@@ -7,3 +7,4 @@ export function notFoundError(message?: string): ApplicationError {
     message: errorMsg
   }
 }
+

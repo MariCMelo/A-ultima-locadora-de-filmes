@@ -50,6 +50,8 @@ export async function finishRental(id: number) {
   });
 }
 
+
+
 export async function connectMoviesToRental(moviesId: number[], rentalId: number) {
   for (let i = 0; i < moviesId.length; i++) {
     const id = moviesId[i];
