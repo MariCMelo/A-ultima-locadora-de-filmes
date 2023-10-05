@@ -1,4 +1,4 @@
-import * as moviesRepository from "../../src/repositories/rentals-repository"
+import * as moviesRepository from "../../src/repositories/movies-repository"
 import * as rentalRepository from "../../src/repositories/rentals-repository"
 import * as usersRepository from "../../src/repositories/users-repository"
 import * as rentalsService from "../../src/services/rentals-service"
@@ -164,7 +164,7 @@ describe("Rentals Service Unit Tests", () => {
 
     const mock = jest.spyOn(rentalRepository, "getRentalsByUserId");
     mock.mockImplementationOnce((userId: number): any => {
-      return [ {
+      return [{
         id: userId,
         date: new Date(),
         endDate: new Date(),
@@ -174,7 +174,7 @@ describe("Rentals Service Unit Tests", () => {
       }]
     });
 
-    const rental =  rentalsService.checkUserAbleToRental(1)
+    const rental = rentalsService.checkUserAbleToRental(1)
     expect(rentalRepository.getRentalsByUserId).toBeCalledTimes(1);
     expect(rental).rejects.toEqual({
       name: "PendentRentalError",
@@ -197,9 +197,91 @@ describe("Rentals Service Unit Tests", () => {
       }
     });
     const rental = await rentalsService.checkUserAbleToRental(1)
-    console.log(rental)
     expect(rentalRepository.getRentalsByUserId).toBeCalledTimes(1);
     expect(rental).toEqual(undefined);
+    expect(true).toBe(true);
+  })
+
+
+  it("checkMoviesValidForRental", async () => {
+
+    const user = {
+      id: 1,
+      firstName: `Luciana`,
+      lastName: `Alves`,
+      email: `lalala@gmail.com`,
+      cpf: `989284567834`,
+      birthDate: new Date(1995, 11, 17)
+    }
+
+    const mock = jest.spyOn(moviesRepository, "getById");
+    mock.mockImplementationOnce((userId: number): any => {
+      return {
+        id: userId,
+        name: faker.animal.dog(),
+        adultsOnly: faker.datatype.boolean(),
+        rentalId: faker.number.int(),
+      }
+    });
+    const rental = rentalsService.checkMoviesValidForRental([1], user)
+    expect(moviesRepository.getById).toBeCalledTimes(1);
+    expect(rental).rejects.toEqual({
+      name: "MovieInRentalError",
+      message: "Movie already in a rental."
+    });
+    expect(true).toBe(true);
+  })
+
+  it("checkMoviesValidForRental", async () => {
+
+    const user = {
+      id: 1,
+      firstName: `Luciana`,
+      lastName: `Alves`,
+      email: `lalala@gmail.com`,
+      cpf: `989284567834`,
+      birthDate: new Date(2010, 11, 17)
+    }
+
+    const mock = jest.spyOn(moviesRepository, "getById");
+    mock.mockImplementationOnce((userId: number): any => {
+      return {
+        id: userId,
+        name: faker.animal.dog(),
+        adultsOnly: true,
+        Rental: faker.number.int(),
+      }
+    });
+    const rental = rentalsService.checkMoviesValidForRental([1], user)
+    expect(moviesRepository.getById).toBeCalledTimes(1);
+    expect(rental).rejects.toEqual({
+      "message": "Cannot see that movie.",
+      "name": "InsufficientAgeError"
+    });
+    expect(true).toBe(true);
+  })
+
+  it("checkMoviesValidForRental", async () => {
+
+    const user = {
+      id: 1,
+      firstName: `Luciana`,
+      lastName: `Alves`,
+      email: `lalala@gmail.com`,
+      cpf: `989284567834`,
+      birthDate: new Date(2010, 11, 17)
+    }
+
+    const mock = jest.spyOn(moviesRepository, "getById");
+    mock.mockImplementationOnce((userId: number): any => {
+      return undefined
+    });
+    const rental = rentalsService.checkMoviesValidForRental([1], user)
+    expect(moviesRepository.getById).toBeCalledTimes(1);
+    expect(rental).rejects.toEqual({
+      name: "NotFoundError",
+      message: "Movie not found."
+    });
     expect(true).toBe(true);
   })
 })

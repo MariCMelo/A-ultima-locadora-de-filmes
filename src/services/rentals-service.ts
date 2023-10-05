@@ -6,7 +6,7 @@ import { movieAlreadyInRental } from "../errors/movie-inretal-error";
 import { insufficientAgeError } from "../errors/insufficientage-error";
 import * as usersRepository from "../repositories/users-repository";
 import * as rentalsRepository from "../repositories/rentals-repository";
-import moviesRepository from "../repositories/movies-repository";
+import * as moviesRepository from "../repositories/movies-repository";
 import { pendentRentalError } from "../errors/pendent-rental-error";
 
 export const RENTAL_LIMITATIONS = {
