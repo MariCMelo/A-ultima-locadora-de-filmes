@@ -2,11 +2,11 @@ import prisma from "../database";
 import { RentalInput } from "../protocols";
 import { RENTAL_LIMITATIONS } from "../services/rentals-service";
 
-function getRentals() {
+export function getRentals() {
   return prisma.rental.findMany();
 }
 
-function getRentalById(id: number, includeMovies = false) {
+export function getRentalById(id: number, includeMovies = false) {
   return prisma.rental.findUnique({
     where: { id },
     include: {
@@ -15,7 +15,7 @@ function getRentalById(id: number, includeMovies = false) {
   })
 }
 
-function getRentalsByUserId(userId: number, closed = true) {
+export function getRentalsByUserId(userId: number, closed = true) {
   return prisma.rental.findMany({
     where: {
       userId,
@@ -26,7 +26,7 @@ function getRentalsByUserId(userId: number, closed = true) {
 
 // FIXME: Esta é uma operação onde faria sentido o uso de TRANSACTIONS.
 // Caso esteja curioso(a), procure saber o que é e tente implementar aqui!
-async function createRental(rentalInput: RentalInput) {
+export async function createRental(rentalInput: RentalInput) {
   const rental = await prisma.rental.create({
     data: {
       userId: rentalInput.userId,
@@ -40,7 +40,7 @@ async function createRental(rentalInput: RentalInput) {
 
 // FIXME: Esta é uma operação onde faria sentido o uso de TRANSACTIONS.
 // Caso esteja curioso(a), procure saber o que é e tente implementar aqui!
-async function finishRental(id: number) {
+export async function finishRental(id: number) {
   await disconnectMoviesFromRental(id);
   await prisma.rental.update({
     where: { id },
@@ -50,7 +50,7 @@ async function finishRental(id: number) {
   });
 }
 
-async function connectMoviesToRental(moviesId: number[], rentalId: number) {
+export async function connectMoviesToRental(moviesId: number[], rentalId: number) {
   for (let i = 0; i < moviesId.length; i++) {
     const id = moviesId[i];
     await prisma.movie.update({
@@ -72,10 +72,3 @@ async function disconnectMoviesFromRental(rentalId: number) {
   }
 }
 
-export default {
-  getRentals,
-  getRentalById,
-  getRentalsByUserId,
-  createRental,
-  finishRental
-};

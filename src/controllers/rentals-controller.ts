@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 
-import rentalsService from "../services/rentals-service";
+import * as rentalsService from "../services/rentals-service";
 import { isValid } from "../utils/id-validator";
 import { RentalFinishInput, RentalInput } from "../protocols";
 
