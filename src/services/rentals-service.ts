@@ -27,8 +27,6 @@ export async function getRentalById(rentalId: number) {
 
   return rental;
 }
-
-
 //nfoi
 export async function createRental(rentalInput: RentalInput) {
   const { userId, moviesId } = rentalInput;
@@ -40,8 +38,6 @@ export async function createRental(rentalInput: RentalInput) {
   const rental = await rentalsRepository.createRental(rentalInput); //(4) ok
   return rental;
 }
-
-
 //ok
 export async function finishRental(rentalId: number) {
   const rental = await rentalsRepository.getRentalById(rentalId);
@@ -49,8 +45,6 @@ export async function finishRental(rentalId: number) {
 
   await rentalsRepository.finishRental(rentalId);
 }
-
-
 //ok 
 export async function getUserForRental(userId: number) {
   const user = await usersRepository.getById(userId);
@@ -59,6 +53,8 @@ export async function getUserForRental(userId: number) {
   return user;
 }
 
+
+//ok
 export async function checkUserAbleToRental(userId: number) {
   const rentals = await rentalsRepository.getRentalsByUserId(userId, false);
   if (rentals.length > 0) throw pendentRentalError("The user already have a rental!");

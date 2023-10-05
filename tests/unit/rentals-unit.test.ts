@@ -74,28 +74,6 @@ describe("Rentals Service Unit Tests", () => {
     expect(true).toBe(true);
   })
 
-  // it("create Rental", async () => {
-
-  //   const rentalInput: RentalInput = {
-  //     userId: faker.number.int(), 
-  //     moviesId: faker.helpers.arrayElements([])
-  //   };
-  //   const mock = jest.spyOn(rentalRepository, "createRental");
-  //   mock.mockImplementationOnce((): any => {
-  //     return 
-
-
-  //   });
-
-  //   const rental = await rentalsService.createRental(rentalInput)
-  //   console.log(rental)
-  //   expect(rentalRepository.createRental).toBeCalledTimes(1);
-  //   expect(rental).toBe(200)
-  //   expect(true).toBe(true);
-  // })
-
-
-
   it("finish rental sucess", async () => {
 
     const mock = jest.spyOn(rentalRepository, "finishRental");
@@ -179,6 +157,49 @@ describe("Rentals Service Unit Tests", () => {
       name: "NotFoundError",
       message: "User not found."
     });
+    expect(true).toBe(true);
+  })
+
+  it("checkUserAbleToRental", async () => {
+
+    const mock = jest.spyOn(rentalRepository, "getRentalsByUserId");
+    mock.mockImplementationOnce((userId: number): any => {
+      return [ {
+        id: userId,
+        date: new Date(),
+        endDate: new Date(),
+        user: "Fake User",
+        userId: 9,
+        closed: false
+      }]
+    });
+
+    const rental =  rentalsService.checkUserAbleToRental(1)
+    expect(rentalRepository.getRentalsByUserId).toBeCalledTimes(1);
+    expect(rental).rejects.toEqual({
+      name: "PendentRentalError",
+      message: "The user already have a rental!"
+    });
+    expect(true).toBe(true);
+  })
+
+  it("checkUserAbleToRental undefined", async () => {
+
+    const mock = jest.spyOn(rentalRepository, "getRentalsByUserId");
+    mock.mockImplementationOnce((userId: number): any => {
+      return {
+        id: userId,
+        date: new Date(),
+        endDate: new Date(),
+        user: "Fake User",
+        userId: 9,
+        closed: false
+      }
+    });
+    const rental = await rentalsService.checkUserAbleToRental(1)
+    console.log(rental)
+    expect(rentalRepository.getRentalsByUserId).toBeCalledTimes(1);
+    expect(rental).toEqual(undefined);
     expect(true).toBe(true);
   })
 })
