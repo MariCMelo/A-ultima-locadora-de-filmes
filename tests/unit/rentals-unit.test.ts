@@ -3,7 +3,7 @@ import * as rentalRepository from "../../src/repositories/rentals-repository"
 import * as usersRepository from "../../src/repositories/users-repository"
 import * as rentalsService from "../../src/services/rentals-service"
 import { faker } from "@faker-js/faker";
-import { number } from "joi";
+import { date, number } from "joi";
 import { RentalInput } from "protocols";
 
 
@@ -70,6 +70,46 @@ describe("Rentals Service Unit Tests", () => {
       userId: expect.any(Number),
       movies: expect.any(String),
       closed: expect.any(Boolean)
+    })
+    expect(true).toBe(true);
+  })
+
+  it("create Rental", async () => {
+
+    const rental: RentalInput = {
+      userId: 10000000,
+      moviesId: []
+    }
+    const mockUser = jest.spyOn(usersRepository, 'getById');
+    mockUser.mockResolvedValue({
+      id: rental.userId,
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      email: faker.internet.email(),
+      cpf: faker.animal.bird(),
+      birthDate: faker.date.past(),
+    })
+    const mockGetRentalById = jest.spyOn(rentalRepository, 'getRentalsByUserId');
+    mockGetRentalById.mockResolvedValue([])
+    const mockMovies = jest.spyOn(moviesRepository, 'getById');
+    mockMovies.mockResolvedValue(undefined)
+
+    const mock = jest.spyOn(rentalRepository, "createRental");
+    mock.mockImplementationOnce((rentalInput: RentalInput): any => {
+      return {
+        userId: rentalInput.userId,
+        endDate: faker.date.future()
+      }
+
+    });
+    
+   
+
+    const rental2 = await rentalsService.createRental(rental)
+    expect(rentalRepository.getRentalById).toBeCalledTimes(0);
+    expect(rental2).toEqual({
+      userId: rental.userId,
+      endDate: expect.any(Date)
     })
     expect(true).toBe(true);
   })
@@ -201,7 +241,6 @@ describe("Rentals Service Unit Tests", () => {
     expect(rental).toEqual(undefined);
     expect(true).toBe(true);
   })
-
 
   it("checkMoviesValidForRental", async () => {
 
